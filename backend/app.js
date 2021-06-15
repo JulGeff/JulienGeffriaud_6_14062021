@@ -43,6 +43,14 @@ app.post('/api/sauces', (req, res, next) => {
       .catch(error => res.status(400).json({ error }));
   });
 
-
+  /*app.post('/api/auth/login', (req, res, next) => {
+    delete req.body._id;
+    const user = new User({
+      ...req.body
+    });
+    user.save()
+      .then(() => res.status(201).json({ message: 'User enregistré !'}))
+      .catch(error => res.status(400).json({ error }));
+  });*/
 
 module.exports = app;
