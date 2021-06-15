@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const Sauce = require('./models/sauce');
+const Sauce = require('./models/Sauce');
+const User = require('./models/User');
 
 const app = express();
 
@@ -29,6 +30,16 @@ app.post('/api/sauces', (req, res, next) => {
     });
     sauce.save()
       .then(() => res.status(201).json({ message: 'Sauce enregistrée !'}))
+      .catch(error => res.status(400).json({ error }));
+  });
+
+  app.post('/api/auth/signup', (req, res, next) => {
+    delete req.body._id;
+    const user = new User({
+      ...req.body
+    });
+    user.save()
+      .then(() => res.status(201).json({ message: 'User enregistré !'}))
       .catch(error => res.status(400).json({ error }));
   });
 
