@@ -76,54 +76,47 @@ exports.getAllSauces = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
 
     if (like === 1) { // Option like
-        if (usersLiked.indexOf(req.body.userId) = -1) { //On vérifie que user ID non présent dans array usersLiked
         Sauce.updateOne(
             { _id: req.params.id }, 
-            { $inc: { likes: 1 },   //likes variable non définie ???
-            $push: { usersLiked: req.body.userId }, _id: req.params.id })
+            { $inc: { likes: + 1 },   //On incrémente les likes
+            $push: { usersLiked: req.body.userId }, _id: req.params.id }) //On ajoute le userID du client à la fin du array usersLikes
 
             .then(() => res.status(200).json({ message: "like sauce !" }))
             .catch(error => res.status(400).json({ error }))
-        }
+        
 
     } else if (like === -1) {      // Option dislike
-        if (usersDisliked.indexOf(req.body.userId) = -1) { //On vérifie que user ID non présent dans array usersDisliked
         Sauce.updateOne(
             { _id: req.params.id }, 
-            { $inc: { dislikes: 1 },   //dislikes variable non définie ???
-            $push: { usersDisliked: req.body.userId }, _id: req.params.id })
+            { $inc: { dislikes: + 1 },   //On incrémente les dislikes
+            $push: { usersDisliked: req.body.userId }, _id: req.params.id }) //On ajoute le userID du client à la fin du array usersDislikes
 
             .then(() => res.status(200).json({ message: "dislike sauce !" }))
             .catch(error => res.status(400).json({ error }))
-        }
+        
 
-    } else if (like === 0) {        // Option ni like ni dislike
-    
-            if (usersLiked.indexOf(req.body.userId) > -1) { //On vérifie si user ID présent dans array usersLiked
+    } else {        // Option ni like ni dislike
+            Sauce.findOne({
+            _id: req.params.id // On récupère l'ID de la sauce
+            })
+            .then(sauce => { 
+                if (sauce.usersLiked.includes(req.body.userId)) { //On vérifie si user ID présent dans array usersLiked
                 Sauce.updateOne(           
                     { _id: req.params.id }, 
-                    { $inc: { likes: -1 }, 
-                    $pull: { usersLiked: req.body.userId }, _id: req.params.id })
+                    { $inc: { likes: -1 }, //On décrémente les likes de la sauce
+                    $pull: { usersLiked: req.body.userId }, _id: req.params.id }) //On supprime le userID du client du array usersLikes
                     .then(() => res.status(200).json({ message: "sauce not liked anymore !" }))
-                    .catch(error => res.status(400).json({ error }))
+                    .catch(error => res.status(400).json({ error })) }
 
-            } else  if (usersDisliked.indexOf(req.body.userId) > -1)  { //On vérifie si user ID présent dans array usersDisliked
+                if (sauce.usersDisliked.includes(req.body.userId)) { //On vérifie si user ID présent dans array usersDisliked
                 Sauce.updateOne(           
                     { _id: req.params.id }, 
-                    { $inc: { dislikes: -1 }, 
-                    $pull: { usersLiked: req.body.userId }, _id: req.params.id })
+                    { $inc: { dislikes: -1 }, //On décrémente les dislikes de la sauce
+                    $pull: { usersLiked: req.body.userId }, _id: req.params.id }) //On supprime le userID du client du array usersDislikes
                     .then(() => res.status(200).json({ message: "sauce not unliked anymore !" }))
-                    .catch(error => res.status(400).json({ error }))
-            } 
-        }
-};
-
-
-/*Définit le statut
-"j'aime" pour userID fourni. Si j'aime = 1, l'utilisateur aime la sauce. 
-Si j'aime = 0, l'utilisateur annule ce qu'il aime ou ce qu'il n'aime pas. 
-Si j'aime = -1, l'utilisateur n'aime pas la sauce.
-L'identifiant de l'utilisateur doit être ajouté ou supprimé du tableau approprié, 
-en gardant une trace de ses préférences et en l'empêchant d'aimer ou de ne pas aimer la
-même sauce plusieurs fois. Nombre total de "j'aime" et de "je n'aime pas" à mettre à jour
-avec chaque "j'aime"*/
+                    .catch(error => res.status(400).json({ error }))  }
+            })
+            .catch(error => res.status(404).json({
+                error
+            }));
+}};
