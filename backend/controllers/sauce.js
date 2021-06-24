@@ -36,7 +36,7 @@ exports.modifySauce = (req, res, next) => {
       .then(sauce => {
         const filename = sauce.imageUrl.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {
-            Sauce.deleteOne({ _id: req.params.id })
+            Sauce.deleteOne({ _id: req.params.id }) 
             .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
             .catch(error => res.status(400).json({ error }));
         });
@@ -98,21 +98,21 @@ exports.likeSauce = (req, res, next) => {
         
 
     } else {        // Option ni like ni dislike
-            Sauce.findOne({
+            Sauce.findOne({    //On récupère l'id de la sauce
             _id: req.params.id // On récupère l'ID de la sauce
             })
             .then(sauce => { 
                 if (sauce.usersLiked.includes(req.body.userId)) { //On vérifie si user ID présent dans array usersLiked
                 Sauce.updateOne(           
-                    { _id: req.params.id }, 
-                    { $inc: { likes: -1 }, //On décrémente les likes de la sauce
+                    { _id: req.params.id }, //On récupère l'id de la sauce
+                    { $inc: { likes: -1 },  //On décrémente les likes de la sauce
                     $pull: { usersLiked: req.body.userId }, _id: req.params.id }) //On supprime le userID du client du array usersLikes
                     .then(() => res.status(200).json({ message: "sauce not liked anymore !" }))
                     .catch(error => res.status(400).json({ error })) }
 
                 if (sauce.usersDisliked.includes(req.body.userId)) { //On vérifie si user ID présent dans array usersDisliked
                 Sauce.updateOne(           
-                    { _id: req.params.id }, 
+                    { _id: req.params.id },   //On récupère l'id de la sauce
                     { $inc: { dislikes: -1 }, //On décrémente les dislikes de la sauce
                     $pull: { usersDisliked: req.body.userId }, _id: req.params.id }) //On supprime le userID du client du array usersDislikes
                     .then(() => res.status(200).json({ message: "sauce not unliked anymore !" }))
