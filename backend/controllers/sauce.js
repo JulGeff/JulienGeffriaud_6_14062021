@@ -32,7 +32,7 @@ exports.modifySauce = (req, res, next) => {
 
 
   exports.deleteSauce = (req, res, next) => {
-    Sauce.findOne({ _id: req.params.id })
+    Sauce.findOne({ _id: req.params.id }) //On récupère l'id de la sauce
       .then(sauce => {
         const filename = sauce.imageUrl.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {
@@ -47,7 +47,7 @@ exports.modifySauce = (req, res, next) => {
 
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({
-            _id: req.params.id
+            _id: req.params.id      //On récupère l'id de la sauce
         })
         .then(sauce => res.status(200).json(sauce))
         .catch(error => res.status(404).json({
@@ -75,9 +75,11 @@ exports.getAllSauces = (req, res, next) => {
 
 exports.likeSauce = (req, res, next) => {
 
+    const like = req.body.like;
+
     if (like === 1) { // Option like
         Sauce.updateOne(
-            { _id: req.params.id }, 
+            { _id: req.params.id },   //On récupère l'id de la sauce
             { $inc: { likes: + 1 },   //On incrémente les likes
             $push: { usersLiked: req.body.userId }, _id: req.params.id }) //On ajoute le userID du client à la fin du array usersLikes
 
@@ -87,7 +89,7 @@ exports.likeSauce = (req, res, next) => {
 
     } else if (like === -1) {      // Option dislike
         Sauce.updateOne(
-            { _id: req.params.id }, 
+            { _id: req.params.id },      //On récupère l'id de la sauce
             { $inc: { dislikes: + 1 },   //On incrémente les dislikes
             $push: { usersDisliked: req.body.userId }, _id: req.params.id }) //On ajoute le userID du client à la fin du array usersDislikes
 
@@ -112,7 +114,7 @@ exports.likeSauce = (req, res, next) => {
                 Sauce.updateOne(           
                     { _id: req.params.id }, 
                     { $inc: { dislikes: -1 }, //On décrémente les dislikes de la sauce
-                    $pull: { usersLiked: req.body.userId }, _id: req.params.id }) //On supprime le userID du client du array usersDislikes
+                    $pull: { usersDisliked: req.body.userId }, _id: req.params.id }) //On supprime le userID du client du array usersDislikes
                     .then(() => res.status(200).json({ message: "sauce not unliked anymore !" }))
                     .catch(error => res.status(400).json({ error }))  }
             })
