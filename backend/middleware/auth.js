@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config()
-const TokenKey = process.env.TOKENKEY;
+const jwt = require('jsonwebtoken');  // importation package pour création et vérification des tokens
+require('dotenv').config()            // importation dotenv pour sécuriser passwords
+const TokenKey = process.env.TOKENKEY;// Récupération de la clé de cryptage des tokens via dotenv
 
 
 module.exports = (req, res, next) => {

@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');        // importation du package de cryptage de mdp bcrypt
 const User = require('../models/User');  // importation du modèle Mongoose :  User
 const jwt = require('jsonwebtoken');     // importation package pour création et vérification des tokens
-require('dotenv').config()
-const TokenKey = process.env.TOKENKEY;
+require('dotenv').config()               // importation dotenv pour sécuriser passwords
+const TokenKey = process.env.TOKENKEY;   // Récupération de la clé de cryptage des tokens via dotenv
 
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)    // On crypte le mot de passe (algorithme exécuté 10 fois) / asynchrone
