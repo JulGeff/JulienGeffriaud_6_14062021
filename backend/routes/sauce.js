@@ -14,4 +14,4 @@ router.delete('/:id', auth, sauceCtrl.deleteSauce);         // Suppression d'une
 router.post('/:id/like', auth, sauceCtrl.likeSauce);        // Gestion des likes sur une sauce donnée
 
 
-module.exports = router;
+module.exports = router; // export pour pouvoir utiliser dans app.js
